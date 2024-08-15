@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lg.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>LGS</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="main-section">
+    <div class="container">
+        <div class="main-card">
+        <div class="card1">
+            <div class="card-body">
+                <h5 class="card-title" style="font-family: sans-serif; font-size: 2rem;">TOME</h5>
+                <p class="card-text" style="font-family: sans-serif; font-size: 1.2rem;">UNLOCK YOUR BEST WORK WITH AI-POWER GERATIVE STORYTELLINGG <br>FROM TOME</p>
+                <p class="card-text2" style="font-family: sans-serif; font-size: 1.2rem;">TOME FEATURES THE FUTURE OF GENERATIVE STORYTELLING IS HERE. UNLOCK <br> BEST WORK WITH TOME’S AI-POWERED STORYTELLING FORMAT. </p>
+                <p class="card-text3" style="font-family: sans-serif; font-size: 1.2rem;">CATEGORY : AI PRESENTATION TOOLS</p>
+                <!-- <a href="#" class="btn" id="cardButton" style="font-family: sans-serif; font-size: 1.2rem;">LEARN MORE</a> -->
+            <div id="countdown-timer">
+                <div class="countdown">
+                    <div class="countdown__container">
+                        <div class="countdown__item days">
+                            <div class="countdown__number" id="days">00</div>
+                            <div class="countdown__info">Days</div>
+                        </div>
+                        <div class="countdown__item hours">
+                            <div class="countdown__number" id="hours">00</div>
+                            <div class="countdown__info">Hr</div>
+                        </div>
+                        <div class="countdown__item minutes">
+                            <div class="countdown__number" id="minutes">00</div>
+                            <div class="countdown__info">Mins</div>
+                        </div>
+                        <div class="countdown__item seconds">
+                            <div class="countdown__number" id="seconds">00</div>
+                            <div class="countdown__info">Sec</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                #countdown-timer {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-top: 20px;
+                }
+
+                .countdown {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .countdown__container {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 30px;
+                }
+
+                .countdown__item {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .countdown__number {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 76px;
+                    height: 76px;
+                    margin-bottom: 16px;
+                    border-radius: 10px;
+                    background-color: #d32f2f;
+                    box-shadow: 0 4px 14px 1px rgba(0, 0, 0, .16);
+                    font-size: 32px;
+                    font-family: 'Digital Numbers';
+                    color: #ffffff;
+                }
+
+                .countdown__info {
+                    font-size: 24px;
+                    color: #d32f2f;
+                    text-align: center;
+                }
+            </style>
+            <script type="text/javascript">
+             function getTimeRemaining(endtime) {
+    const total = Date.parse(endtime) - Date.parse(new Date());
+    const seconds = Math.floor((total / 1000) % 60);
+    const minutes = Math.floor((total / 1000 / 60) % 60);
+    const hours = Math.floor((total / 1000 / 60 / 60) % 24);
+    const days = Math.floor(total / (1000 * 60 * 60 * 24));
+    return {
+        total,
+        days,
+        hours,
+        minutes,
+        seconds
+    };
+}
+
+function initializeClock(endtime, tools) {
+    let currentIndex = 0;
+
+    function updateClock() {
+        const t = getTimeRemaining(endtime);
+        document.getElementById('days').innerHTML = ('0' + t.days).slice(-2);
+        document.getElementById('hours').innerHTML = ('0' + t.hours).slice(-2);
+        document.getElementById('minutes').innerHTML = ('0' + t.minutes).slice(-2);
+        document.getElementById('seconds').innerHTML = ('0' + t.seconds).slice(-2);
+        
+        if (t.total <= 0) {
+            clearInterval(timeinterval);
+            alert('New AI tool is here');
+            
+            // Update the contents with the next row
+            currentIndex = (currentIndex + 1) % tools.length;
+            displayTool(tools[currentIndex]);
+
+            // Reset the timer for the next tool
+            const newDeadline = new Date(Date.parse(new Date()) + 24 * 60 * 60 * 1000);
+            initializeClock(newDeadline, tools);
+        }
+    }
+
+    updateClock();
+    const timeinterval = setInterval(updateClock, 1000);
+}
+
+function displayTool(tool) {
+    document.querySelector('.card-title').innerText = tool.title;
+    document.querySelector('.card-text').innerText = tool.mini_description;
+    document.querySelector('.card-text2').innerText = tool.description;
+    document.querySelector('.card-text3').innerText = tool.category;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const targetTime = new Date();
+    targetTime.setHours(7, 45, 0);
+ // Set to the desired time
+    if (today > targetTime) {
+        targetTime.setDate(targetTime.getDate() + 1); // Move to the next day if the current time is past the desired time
+    }
+
+    fetch('aitools.csv')
+        .then(response => response.text())
+        .then(data => {
+            const tools = parseCSV(data);
+            initializeClock(targetTime, tools);
+            displayTool(tools[0]); // Initially display the first tool
+        })
+        .catch(error => console.error('Error loading CSV data:', error));
+});
+
+function parseCSV(data) {
+    const lines = data.split('\n').filter(line => line.trim() !== '');
+    const headers = lines[0].split(',').map(header => header.trim());
+    const tools = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        const currentLine = lines[i].split(',');
+
+        if (currentLine.length === headers.length) {
+            const obj = {};
+            headers.forEach((header, index) => {
+                obj[header] = currentLine[index] ? currentLine[index].trim() : '';
+            });
+
+            tools.push({
+                title: obj['title'],
+                mini_description: obj['minidesc'],
+                description: obj['desc'],
+                category: obj['cat']
+            });
+        } else {
+            console.warn(`Skipping row ${i} due to mismatched column count:`, currentLine);
+        }
+    }
+
+    return tools;
+}
+
+             </script>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+    <script>
+        // script.js
+document.getElementById('cardButton').addEventListener('click', function() {
+    alert('Button clicked!');
+});
+
+    </script>
+    <div style="position: fixed; bottom: 10px; right: 10px; font-family: sans-serif; font-size: 1rem; color: #fff; font-style: italic;">
+        An Initiative By The AI Society, ChatGPT is just the start—dive into more AI tools!
+    </div>
+</body>
+</html>

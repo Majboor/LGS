@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/digital-numbers');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Volkhov:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+        #new-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .countdown {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown__container {
+            display: flex;
+            flex-direction: row;
+            gap: 30px;
+        }
+
+        .countdown__data {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .countdown__item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown__number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 76px;
+            height: 76px;
+            margin-bottom: 16px;
+            border-radius: 10px;
+            background-color: #d32f2f;
+            box-shadow: 0 4px 14px 1px rgba(0, 0, 0, .16);
+            font-size: 32px;
+            font-family: 'Digital Numbers';
+            color: #ffffff;
+        }
+
+        .countdown__info {
+            font-size: 24px;
+            color: #d32f2f;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="new-container">
+        <div class="countdown">
+            <div class="countdown__container">
+                <div class="countdown__item days">
+                    <div class="countdown__number" id="days">00</div>
+                    <div class="countdown__info">Days</div>
+                </div>
+                <div class="countdown__item hours">
+                    <div class="countdown__number" id="hours">00</div>
+                    <div class="countdown__info">Hr</div>
+                </div>
+                <div class="countdown__item minutes">
+                    <div class="countdown__number" id="minutes">00</div>
+                    <div class="countdown__info">Mins</div>
+                </div>
+                <div class="countdown__item seconds">
+                    <div class="countdown__number" id="seconds">00</div>
+                    <div class="countdown__info">Sec</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function getTimeRemaining(endtime) {
+            const total = Date.parse(endtime) - Date.parse(new Date());
+            const seconds = Math.floor((total / 1000) % 60);
+            const minutes = Math.floor((total / 1000 / 60) % 60);
+            const hours = Math.floor((total / 1000 / 60 / 60) % 24);
+            const days = Math.floor(total / (1000 * 60 * 60 * 24));
+            return {
+                total,
+                days,
+                hours,
+                minutes,
+                seconds
+            };
+        }
+
+        function initializeClock(endtime) {
+            function updateClock() {
+                const t = getTimeRemaining(endtime);
+                document.getElementById('days').innerHTML = ('0' + t.days).slice(-2);
+                document.getElementById('hours').innerHTML = ('0' + t.hours).slice(-2);
+                document.getElementById('minutes').innerHTML = ('0' + t.minutes).slice(-2);
+                document.getElementById('seconds').innerHTML = ('0' + t.seconds).slice(-2);
+                if (t.total <= 0) {
+                    clearInterval(timeinterval);
+                    // Call a function when the countdown reaches zero
+                    alert('Timer ended!');
+                    // Reset the timer for the next day
+                    const newDeadline = new Date(Date.parse(new Date()) + 24 * 60 * 60 * 1000);
+                    initializeClock(newDeadline);
+                }
+            }
+            updateClock();
+            const timeinterval = setInterval(updateClock, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const targetTime = new Date();
+            targetTime.setHours(19, 20, 0); // Set to 7:20 PM
+            if (today > targetTime) {
+                targetTime.setDate(targetTime.getDate() + 1); // Move to the next day if current time is past 7:20 PM
+            }
+            initializeClock(targetTime);
+        });
+    </script>
+</body>
+</html>

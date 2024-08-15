@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lg.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>LGS</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Timer styling */
+        #timer {
+            font-size: 2rem;
+            color: #003366; /* Dark blue for the timer */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-section">
+        <div class="container">
+            <div id="timer">30</div> <!-- Timer added here -->
+            <div class="main-card">
+                <div class="card1">
+                    <div class="card-body">
+                        <h5 class="card-title" id="title">TOME</h5>
+                        <p class="card-text" id="minidesc">UNLOCK YOUR BEST WORK WITH AI-POWER GERATIVE STORYTELLINGG <br>FROM TOME</p>
+                        <p class="card-text2" id="desc">TOME FEATURES THE FUTURE OF GENERATIVE STORYTELLING IS HERE. UNLOCK <br> BEST WORK WITH TOME’S AI-POWERED STORYTELLING FORMAT. </p>
+                        <p class="card-text3" id="category">CATEGORY : AI PRESENTATION TOOLS</p>
+                        <a href="#" class="btn" id="cardButton">LEARN MORE</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Timer functionality
+        let timeLeft = 5;
+        const timerElement = document.getElementById('timer');
+
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    fetchNextRow(); // Fetch next row when timer ends
+                } else {
+                    timerElement.textContent = timeLeft;
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        // Function to fetch the next row from the CSV and update the content
+        function fetchNextRow() {
+            // Fetch the CSV file using Fetch API
+            fetch('aitools.csv')
+                .then(response => response.text())
+                .then(csvText => {
+                    const rows = csvText.split('\n').map(row => row.split(','));
+                    const nextRow = rows.shift(); // Get the next row
+                    
+                    if (nextRow) {
+                        // Update the content with the next row data
+                        document.getElementById('title').textContent = nextRow[0];
+                        document.getElementById('minidesc').innerHTML = nextRow[1];
+                        document.getElementById('desc').innerHTML = nextRow[2];
+                        document.getElementById('category').textContent = `CATEGORY: ${nextRow[3]}`;
+                        document.getElementById('cardButton').href = nextRow[5];
+
+                        // Restart the timer
+                        timeLeft = 5;
+                        startTimer();
+                    }
+                })
+                .catch(error => console.error('Error fetching CSV:', error));
+        }
+
+        // Button click event
+        document.getElementById('cardButton').addEventListener('click', function() {
+            alert('Button clicked!');
+        });
+
+        // Start the timer when the page loads
+        startTimer();
+    </script>
+</body>
+</html>
