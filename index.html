@@ -91,20 +91,25 @@
                 }
             </style>
             <script type="text/javascript">
-             function getTimeRemaining(endtime) {
-    const total = Date.parse(endtime) - Date.parse(new Date());
-    const seconds = Math.floor((total / 1000) % 60);
-    const minutes = Math.floor((total / 1000 / 60) % 60);
-    const hours = Math.floor((total / 1000 / 60 / 60) % 24);
-    const days = Math.floor(total / (1000 * 60 * 60 * 24));
-    return {
-        total,
-        days,
-        hours,
-        minutes,
-        seconds
-    };
-}
+        document.addEventListener('DOMContentLoaded', function () {
+    const now = new Date();
+    let targetTime = new Date();
+    targetTime.setHours(8, 0, 0, 0); // Set target time to 8 AM
+
+    if (now > targetTime) {
+        // If the current time is past 8 AM, set the target time to 8 AM of the next day
+        targetTime.setDate(targetTime.getDate() + 1);
+    }
+
+    fetch('aitools.csv')
+        .then(response => response.text())
+        .then(data => {
+            const tools = parseCSV(data);
+            initializeClock(targetTime, tools);
+            displayTool(tools[0]); // Initially display the first tool
+        })
+        .catch(error => console.error('Error loading CSV data:', error));
+});
 
 function initializeClock(endtime, tools) {
     let currentIndex = 0;
@@ -115,11 +120,11 @@ function initializeClock(endtime, tools) {
         document.getElementById('hours').innerHTML = ('0' + t.hours).slice(-2);
         document.getElementById('minutes').innerHTML = ('0' + t.minutes).slice(-2);
         document.getElementById('seconds').innerHTML = ('0' + t.seconds).slice(-2);
-        
+
         if (t.total <= 0) {
             clearInterval(timeinterval);
             alert('New AI tool is here');
-            
+
             // Update the contents with the next row
             currentIndex = (currentIndex + 1) % tools.length;
             displayTool(tools[currentIndex]);
@@ -134,31 +139,27 @@ function initializeClock(endtime, tools) {
     const timeinterval = setInterval(updateClock, 1000);
 }
 
+function getTimeRemaining(endtime) {
+    const total = Date.parse(endtime) - Date.parse(new Date());
+    const seconds = Math.floor((total / 1000) % 60);
+    const minutes = Math.floor((total / 1000 / 60) % 60);
+    const hours = Math.floor((total / 1000 / 60 / 60) % 24);
+    const days = Math.floor(total / (1000 * 60 * 60 * 24));
+    return {
+        total,
+        days,
+        hours,
+        minutes,
+        seconds
+    };
+}
+
 function displayTool(tool) {
     document.querySelector('.card-title').innerText = tool.title;
     document.querySelector('.card-text').innerText = tool.mini_description;
     document.querySelector('.card-text2').innerText = tool.description;
     document.querySelector('.card-text3').innerText = tool.category;
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const today = new Date();
-    const targetTime = new Date();
-    targetTime.setHours(7, 45, 0);
- // Set to the desired time
-    if (today > targetTime) {
-        targetTime.setDate(targetTime.getDate() + 1); // Move to the next day if the current time is past the desired time
-    }
-
-    fetch('aitools.csv')
-        .then(response => response.text())
-        .then(data => {
-            const tools = parseCSV(data);
-            initializeClock(targetTime, tools);
-            displayTool(tools[0]); // Initially display the first tool
-        })
-        .catch(error => console.error('Error loading CSV data:', error));
-});
 
 function parseCSV(data) {
     const lines = data.split('\n').filter(line => line.trim() !== '');
@@ -187,6 +188,7 @@ function parseCSV(data) {
 
     return tools;
 }
+
 
              </script>
             </div>
